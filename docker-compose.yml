@@ -1,0 +1,32 @@
+version: "3.6"
+
+networks:
+  auth-network:
+    driver: bridge
+
+services:
+  auth-api:
+    build: .
+    volumes:
+      - .:/home/node/api
+    networks:
+      - auth-network
+    depends_on:
+      - auth-postgres
+    container_name: auth-api
+    command: yarn dev
+    ports:
+      - 3334:3334
+
+  auth-postgres:
+    image: postgres
+    container_name: auth-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASS}
+      POSTGRES_DB: ${DB_NAME}
+      PGDATA: /data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - auth-network
